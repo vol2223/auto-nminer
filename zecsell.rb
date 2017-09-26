@@ -6,7 +6,6 @@ fee = 0.0005
 now = DateTime.now.strftime("%Y-%m-%d %H:%M:%S") + " "
 
 addr = ENV["NICEHASH_ADDR"]
-p addr
 
 Bitfinex::Client.configure do |conf|
   conf.api_key = ENV["BFX_API_KEY"]
