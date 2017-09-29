@@ -18,14 +18,15 @@ for wallet in balances do
   if 'exchange' == wallet['type'] and 'zec' == wallet['currency']
     amount = wallet['amount'].to_f
     if 0.0 != amount
-      p now + '[I]' + amount.to_s + ' zec sell'
-      p client.new_order("ZECBTC", amount, "market", "sell")
+      p now + '[I] ' + amount.to_s + ' zec sell'
+      p client.new_order("zecbtc", amount, "market", "sell")
+      p client.orders
     end
   elsif 'exchange' == wallet['type'] and 'btc' == wallet['currency']
     amount = wallet['amount'].to_f
     if 0.0 != amount
       amount = amount - fee;
-      p now + '[I]' + amount.to_s + ' btc withdraw'
+      p now + '[I] ' + amount.to_s + ' btc withdraw'
       p client.withdraw("bitcoin", "exchange", amount, address: addr)
     end
   end
