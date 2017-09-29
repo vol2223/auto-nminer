@@ -31,6 +31,8 @@ $orders = $jsonArray['result']['orders'];
 $jsonArray = json_decode(file_get_contents('https://api.bitfinex.com/v2/ticker/tZECBTC'), true);
 $zecbtc = reset($jsonArray);
 
+$myOrders = $nicehashApi->myGet();
+
 $orders = array_filter($orders, function($x) {
 	return $x['workers'] !== 0;
 });
@@ -62,16 +64,12 @@ if ($dayBtc > $buyPrice + $diffRate) {
 	$nicehashApi->create($amount, $buyPrice, $HOST, $PORT, $USER, $PASSWORD);
 
 } else {
-	$myOrders = $nicehashApi->myGet();
-	if (empty($myOrders['result']['orders']) and 0.01 >= floatval($amount)) {
-		exec('ruby zecsell.rb');
-	}
 	if ($cancelDiffRate >= $dayBtc - $buyPrice) {
 		foreach ($myOrders['result']['orders'] as $order) {
 			$orderId = $order['id'];
 			$jsonArray = $nicehashApi->orderRemove($orderId);
+			echo "$now [I] cancel. orderID: $orderId \n";
 		};
-		echo "$now [I] cancel. orderID: $orderId \n";
 	}
 	echo "$now [I] not buy. day reword $dayBtc btc \n";
 	echo "$now [I] not buy. buy price $buyPrice  btc \n";

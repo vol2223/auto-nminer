@@ -19,7 +19,7 @@ for wallet in balances do
     amount = wallet['amount'].to_f
     if 0.0 != amount
       p now + '[I] ' + amount.to_s + ' zec sell'
-      p client.new_order("zecbtc", amount, "market", "sell")
+      p client.new_order("zecbtc", amount, "exchange market", "sell")
       p client.orders
     end
   elsif 'exchange' == wallet['type'] and 'btc' == wallet['currency']
