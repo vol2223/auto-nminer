@@ -24,7 +24,7 @@ for wallet in balances do
     end
   elsif 'exchange' == wallet['type'] and 'btc' == wallet['currency']
     amount = wallet['amount'].to_f
-    if 0.0 != amount
+    if 0.0 != amount  && 0.1 <= amount
       amount = amount - fee;
       p now + '[I] ' + amount.to_s + ' btc withdraw'
       p client.withdraw("bitcoin", "exchange", amount, address: addr)

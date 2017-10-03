@@ -4,7 +4,7 @@ $hashrate = 1000000;
 $blockReward = 10;
 $buyThreshold = 2;
 $fee = 0.04;
-$diffRate = 0.25;
+$diffRate = 0.22;
 $cancelDiffRate = 0.2;
 $ALGORITHM = 24;
 
@@ -58,9 +58,9 @@ if ($dayBtc > $buyPrice + $diffRate) {
 	if (0.01 >= floatval($amount)) {
 		exit;
 	}
-	echo "$now [I] buy. day reword $dayReword zec \n";
-	echo "$now [I] buy. day reword $dayBtc btc \n";
-	echo "$now [I] buy. buy price $buyPrice  btc \n";
+	echo "$now [I] Purchase is established. day reword $dayReword zec\n";
+	echo "$now [I] Purchase is established. day reword $dayBtc btc\n";
+	echo "$now [I] Purchase is established. buy price $buyPrice  btc\n";
 	$nicehashApi->create($amount, $buyPrice, $HOST, $PORT, $USER, $PASSWORD);
 
 } else {
@@ -71,8 +71,10 @@ if ($dayBtc > $buyPrice + $diffRate) {
 			echo "$now [I] cancel. orderID: $orderId \n";
 		};
 	}
-	echo "$now [I] not buy. day reword $dayBtc btc \n";
-	echo "$now [I] not buy. buy price $buyPrice  btc \n";
+	echo "$now [I] not buy. day reword $dayBtc btc\n";
+	echo "$now [I] not buy. buy price $buyPrice  btc\n";
+	$diffPrice = $dayBtc - $buyPrice;
+	echo "$now [I] not buy. diff price $diffPrice btc\n";
 }
 
 class NicehashAPI
