@@ -2,10 +2,10 @@
 
 $hashrate = 1000000;
 $blockReward = 10;
-$buyThreshold = 2;
-$fee = 0.04;
-$diffRate = 0.22;
-$cancelDiffRate = 0.2;
+$buyThreshold = 1;
+$fee = 0;
+$diffRate = 0.13;
+$cancelDiffRate = 0.08;
 $ALGORITHM = 24;
 
 $API_ID = getenv('NICEHASH_API_ID');
@@ -38,7 +38,7 @@ $orders = array_filter($orders, function($x) {
 });
 
 $priceList = [];
-$count = 1;
+$count = 0;
 foreach ($orders as $order) {
 	$priceList[$count] = $order['price'];
 	$count++;
@@ -47,9 +47,24 @@ foreach ($orders as $order) {
 $dayReword = (($hashrate / ($diff * 8192)) * (1 - $fee) * $blockReward * 86400);
 $dayBtc = $zecbtc * $dayReword;
 
-$buyPrice = floatval($priceList[max(array_keys($priceList)) - $buyThreshold]);
+$buyPrice = floatval($priceList[max(array_keys($priceList))]);
+
+//$buyPrice = $dayBtc - 0.11;
+//$fee = $amount * 0.03 + $amount * 0.01 + 0.0006 + $amount * 0.04;
+//$minutesDayBtc = $dayBtc/24/60;
+//$minutesBuyBtc = $buyPrice/24/60;
+//$processTimeByDay = 86400 * ($amount/$dayBtc);
+//$processTimeByBuy = 86400 * (($amount - $fee)/$buyPrice);
+//$processTimeFromAmount = (($processTimeByBuy - $processTimeByDay) / 60);
+// var_dump($minutesBuyBtc * $processTimeFromAmount);
+//$rewordBtc = ($minutesDayBtc * $processTimeFromAmount) - ($minutesBuyBtc * $processTimeFromAmount);
+// var_dump($rewordBtc);
+//exit;
+
 if (0 >= $buyPrice) {
-	echo "$now [E] buy plice";
+	echo "$now [E] buy plice $buyPrice\n";
+	echo  count($priceList) . "\n";
+	echo implode(',', array_keys($priceList)) . "\n";
 	exit;
 }
 $buyPrice = $buyPrice + 0.0101;
@@ -64,15 +79,16 @@ if ($dayBtc > $buyPrice + $diffRate) {
 	$nicehashApi->create($amount, $buyPrice, $HOST, $PORT, $USER, $PASSWORD);
 
 } else {
-	if ($cancelDiffRate >= $dayBtc - $buyPrice) {
-		foreach ($myOrders['result']['orders'] as $order) {
+	foreach ($myOrders['result']['orders'] as $order) {
+		if ($cancelDiffRate >= $dayBtc - $order['price']) {
 			$orderId = $order['id'];
+			$cancelPrice = $order['price'];
 			$jsonArray = $nicehashApi->orderRemove($orderId);
-			echo "$now [I] cancel. orderID: $orderId \n";
-		};
+			echo "$now [I] cancel. orderID: $orderId price: $cancelPrice \n";
+		}
 	}
-	echo "$now [I] not buy. day reword $dayBtc btc\n";
-	echo "$now [I] not buy. buy price $buyPrice  btc\n";
+//	echo "$now [I] not buy. day reword $dayBtc btc\n";
+//	echo "$now [I] not buy. buy price $buyPrice  btc\n";
 	$diffPrice = $dayBtc - $buyPrice;
 	echo "$now [I] not buy. diff price $diffPrice btc\n";
 }
